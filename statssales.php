@@ -46,7 +46,7 @@ class StatsSales extends ModuleGraph
 		parent::__construct();
 
 		$this->displayName = $this->l('Sales and orders');
-		$this->description = $this->l('Adds sales evolution and orders by status.');
+		$this->description = $this->l('Adds graphics presenting the evolution of sales and orders to the Stats dashboard.');
 		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
 	}
 
@@ -83,20 +83,24 @@ class StatsSales extends ModuleGraph
 			</div>
 			<h4>'.$this->l('Guide').'</h4>
 			<div class="alert alert-warning">
-				<h4>'.$this->l('Various order statuses').'</h4>
+				<h4>'.$this->l('About order statuses').'</h4>
 				<p>
 					'.$this->l('In your Back Office, you can modify the following order statuses: Awaiting Check Payment, Payment Accepted, Preparation in Progress, Shipping, Delivered, Cancelled, Refund, Payment Error, Out of Stock, and Awaiting Bank Wire Payment.').'<br />
-					'.$this->l('These order statuses cannot be removed from the Back Office, however you have the option to add more.').'
+					'.$this->l('These order statuses cannot be removed from the Back Office; however you have the option to add more.').'
 				</p>
 			</div>
 			<div class="alert alert-info">
-				<p>'.$this->l('The following graphs represent the evolution of your e-store\'s orders and sales turnover for a selected period. This tool is one that you should use often as it allows you to quickly monitor your store\'s viability. This tool also allows you to monitor multiple time periods, and only valid orders are graphically represented.').'</p>
+				<p>'
+					.$this->l('The following graphs represent the evolution of your store\'s orders and sales turnover for a selected period.').'<br/>'
+					.$this->l('You should often consult this screen, as it allows you to quickly monitor your store\'s viability. It also allows you to monitor multiple time periods.').'<br/>'
+					.$this->l('Only valid orders are graphically represented.')
+				.'</p>
 			</div>
 			<form action="'.Tools::safeOutput($_SERVER['REQUEST_URI']).'" method="post" class="form-horizontal alert">
 				<div class="row">
 					<div class="col-lg-4 col-lg-offset-7">
 						<select name="id_country">
-							<option value="0"'.((!Tools::getValue('id_order_state')) ? ' selected="selected"' : '').'>'.$this->l('All').'</option>';
+							<option value="0"'.((!Tools::getValue('id_order_state')) ? ' selected="selected"' : '').'>'.$this->l('All countries').'</option>';
 		foreach (Country::getCountries($this->context->language->id) as $country)
 			$this->html .= '<option value="'.$country['id_country'].'"'.(($country['id_country'] == Tools::getValue('id_country')) ? ' selected="selected"' : '').'>'.$country['name'].'</option>';
 		$this->html .= '</select>
@@ -137,7 +141,7 @@ class StatsSales extends ModuleGraph
 					</div>
 					<div class="col-lg-4">
 						<ul class="list-unstyled">
-							<li>'.$this->l('Sales').' '.Tools::displayPrice($totals['orderSum'], $currency).'</li>
+							<li>'.$this->l('Sales:').' '.Tools::displayPrice($totals['orderSum'], $currency).'</li>
 						</ul>
 						<hr/>
 						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI']).'&export=2">
@@ -147,7 +151,7 @@ class StatsSales extends ModuleGraph
 				</div>
 			</div>
 			<div class="alert alert-info">
-				'.$this->l('You can view order distribution below.').'
+				'.$this->l('You can view the distribution of order statuses below.').'
 			</div>
 			<div class="row row-margin-bottom">
 				<div class="col-lg-12">
@@ -199,15 +203,15 @@ class StatsSales extends ModuleGraph
 		{
 			case 1:
 				$this->_titles['main'][0] = $this->l('Products and orders');
-				$this->_titles['main'][1] = $this->l('orders');
+				$this->_titles['main'][1] = $this->l('Orders');
 				$this->_titles['main'][2] = $this->l('Products:');
 				break;
 			case 2:
 				$currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
-				$this->_titles['main'] = $this->l('Sales in').' '.$currency->iso_code;
+				$this->_titles['main'] = sprintf($this->l('Sales currency: %s'), $currency->iso_code);
 				break;
 			case 3:
-				$this->_titles['main'] = $this->l('Percentage of orders by status.');
+				$this->_titles['main'] = $this->l('Percentage of orders per status.');
 				break;
 		}
 	}
