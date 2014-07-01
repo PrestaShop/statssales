@@ -125,7 +125,7 @@ class StatsSales extends ModuleGraph
 							<li>'.$this->l('Products bought:').' <span class="totalStats">'.(int)$totals['products'].'</span></li>
 						</ul>
 						<hr/>
-						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI']).'&export=1">
+						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI'].'&export=1').'">
 							<i class="icon-cloud-upload"></i> '.$this->l('CSV Export').'
 						</a>
 					</div>
@@ -144,7 +144,7 @@ class StatsSales extends ModuleGraph
 							<li>'.$this->l('Sales:').' '.Tools::displayPrice($totals['orderSum'], $currency).'</li>
 						</ul>
 						<hr/>
-						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI']).'&export=2">
+						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI'].'&export=2').'">
 							<i class="icon-cloud-upload"></i> '.$this->l('CSV Export').'
 						</a>
 					</div>
@@ -159,10 +159,10 @@ class StatsSales extends ModuleGraph
 						'.($totals['orderCount'] ? $this->engine(array(
 				'type' => 'pie',
 				'option' => '3-'.(int)Tools::getValue('id_country')
-			)) : $this->l('No orders for this period.')).'</center>
+			)) : $this->l('No orders for this period.')).'
 					</div>
 					<div class="col-lg-4">
-						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI']).'&export=3">
+						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI'].'&export=3').'">
 							<i class="icon-cloud-upload"></i> '.$this->l('CSV Export').'
 						</a>
 					</div>
