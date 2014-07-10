@@ -85,14 +85,14 @@ class StatsSales extends ModuleGraph
 			<div class="alert alert-warning">
 				<h4>'.$this->l('About order statuses').'</h4>
 				<p>
-					'.$this->l('In your Back Office, you can modify the following order statuses: Awaiting Check Payment, Payment Accepted, Preparation in Progress, Shipping, Delivered, Cancelled, Refund, Payment Error, Out of Stock, and Awaiting Bank Wire Payment.').'<br />
+					'.$this->l('In your Back-office, you can modify the following order statuses: Awaiting Check Payment, Payment Accepted, Preparation in Progress, Shipping, Delivered, Canceled, Refund, Payment Error, Out of Stock, and Awaiting Bank Wire Payment.').'<br />
 					'.$this->l('These order statuses cannot be removed from the Back-office; however you have the option to add more.').'
 				</p>
 			</div>
 			<div class="alert alert-info">
 				<p>'
-					.$this->l('The following graphs represent the evolution of your store\'s orders and sales turnover for a selected period.').'<br/>'
-					.$this->l('You should often consult this screen, as it allows you to quickly monitor your store\'s sustainability. It also allows you to monitor multiple time periods.').'<br/>'
+					.$this->l('The following graphs represent the evolution of your shop\'s orders and sales turnover for a selected period.').'<br/>'
+					.$this->l('You should often consult this screen, as it allows you to quickly monitor your shop\'s sustainability. It also allows you to monitor multiple time periods.').'<br/>'
 					.$this->l('Only valid orders are graphically represented.')
 				.'</p>
 			</div>
