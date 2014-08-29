@@ -202,8 +202,8 @@ class StatsSales extends ModuleGraph
 		switch ($this->option)
 		{
 			case 1:
-				$this->_titles['main'][0] = $this->l('Products and orders');
-				$this->_titles['main'][1] = $this->l('Orders');
+				$this->_titles['main'][0] = $this->l('Orders placed');
+				$this->_titles['main'][1] = $this->l('Products bought');
 				$this->_titles['main'][2] = $this->l('Products:');
 				break;
 			case 2:
