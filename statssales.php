@@ -40,15 +40,15 @@ class statssales extends ModuleGraph
     {
         $this->name = 'statssales';
         $this->tab = 'analytics_stats';
-        $this->version = '1.3.0';
+        $this->version = '2.0.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
         parent::__construct();
 
-        $this->displayName = $this->l('Sales and orders');
-        $this->description = $this->l('Adds graphics presenting the evolution of sales and orders to the Stats dashboard.');
-        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+        $this->displayName = $this->trans('Sales and orders', array(), 'Modules.Statssales.Admin');
+        $this->description = $this->trans('Adds graphics presenting the evolution of sales and orders to the Stats dashboard.', array(), 'Modules.Statssales.Admin');
+        $this->ps_versions_compliancy = array('min' => '1.7.0.0', 'max' => _PS_VERSION_);
     }
 
     public function install()
@@ -83,33 +83,33 @@ class statssales extends ModuleGraph
 			<div class="panel-heading">
 				'.$this->displayName.'
 			</div>
-			<h4>'.$this->l('Guide').'</h4>
+			<h4>'.$this->trans('Guide', array(), 'Admin.Global').'</h4>
 			<div class="alert alert-warning">
-				<h4>'.$this->l('About order statuses').'</h4>
+				<h4>'.$this->trans('About order statuses', array(), 'Modules.Statssales.Admin').'</h4>
 				<p>
-					'.$this->l('In your Back Office, you can modify the following order statuses: Awaiting Check Payment, Payment Accepted, Preparation in Progress, Shipping, Delivered, Canceled, Refund, Payment Error, Out of Stock, and Awaiting Bank Wire Payment.').'<br />
-					'.$this->l('These order statuses cannot be removed from the Back Office; however you have the option to add more.').'
+					'.$this->trans('In your Back Office, you can modify the following order statuses: Awaiting Check Payment, Payment Accepted, Preparation in Progress, Shipping, Delivered, Canceled, Refund, Payment Error, Out of Stock, and Awaiting Bank Wire Payment.', array(), 'Modules.Statssales.Admin').'<br />
+					'.$this->trans('These order statuses cannot be removed from the Back Office; however you have the option to add more.', array(), 'Modules.Statssales.Admin').'
 				</p>
 			</div>
 			<div class="alert alert-info">
 				<p>'
-                    .$this->l('The following graphs represent the evolution of your shop\'s orders and sales turnover for a selected period.').'<br/>'
-                    .$this->l('You should often consult this screen, as it allows you to quickly monitor your shop\'s sustainability. It also allows you to monitor multiple time periods.').'<br/>'
-                    .$this->l('Only valid orders are graphically represented.')
+                    .$this->trans('The following graphs represent the evolution of your shop\'s orders and sales turnover for a selected period.', array(), 'Modules.Statssales.Admin').'<br/>'
+                    .$this->trans('You should often consult this screen, as it allows you to quickly monitor your shop\'s sustainability. It also allows you to monitor multiple time periods.', array(), 'Modules.Statssales.Admin').'<br/>'
+                    .$this->trans('Only valid orders are graphically represented.', array(), 'Modules.Statssales.Admin')
                 .'</p>
 			</div>
 			<form action="'.Tools::safeOutput($_SERVER['REQUEST_URI']).'" method="post" class="form-horizontal alert">
 				<div class="row">
 					<div class="col-lg-4 col-lg-offset-7">
 						<select name="id_country">
-							<option value="0"'.((!Tools::getValue('id_order_state')) ? ' selected="selected"' : '').'>'.$this->l('All countries').'</option>';
+							<option value="0"'.((!Tools::getValue('id_order_state')) ? ' selected="selected"' : '').'>'.$this->trans('All countries', array(), 'Admin.Global').'</option>';
         foreach (Country::getCountries($this->context->language->id) as $country) {
             $this->html .= '<option value="'.$country['id_country'].'"'.(($country['id_country'] == Tools::getValue('id_country')) ? ' selected="selected"' : '').'>'.$country['name'].'</option>';
         }
         $this->html .= '</select>
 					</div>
 					<div class="col-lg-1">
-						<input type="submit" name="submitCountry" value="'.$this->l('Filter').'" class="btn btn-default pull-right" />
+						<input type="submit" name="submitCountry" value="'.$this->trans('Filter', array(), 'Admin.Global').'" class="btn btn-default pull-right" />
 					</div>
 				</div>
 			</form>
@@ -124,12 +124,12 @@ class statssales extends ModuleGraph
 					</div>
 					<div class="col-lg-4">
 						<ul class="list-unstyled">
-							<li>'.$this->l('Orders placed:').' <span class="totalStats">'.(int)$totals['orderCount'].'</span></li>
-							<li>'.$this->l('Products bought:').' <span class="totalStats">'.(int)$totals['products'].'</span></li>
+							<li>'.$this->trans('Orders placed:', array(), 'Modules.Statssales.Admin').' <span class="totalStats">'.(int)$totals['orderCount'].'</span></li>
+							<li>'.$this->trans('Products bought:', array(), 'Admin.Global').' <span class="totalStats">'.(int)$totals['products'].'</span></li>
 						</ul>
 						<hr/>
 						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI'].'&export=1').'">
-							<i class="icon-cloud-upload"></i> '.$this->l('CSV Export').'
+							<i class="icon-cloud-upload"></i> '.$this->trans('CSV Export', array(), 'Modules.Statssales.Admin').'
 						</a>
 					</div>
 				</div>
@@ -144,17 +144,17 @@ class statssales extends ModuleGraph
 					</div>
 					<div class="col-lg-4">
 						<ul class="list-unstyled">
-							<li>'.$this->l('Sales:').' '.Tools::displayPrice($totals['orderSum'], $currency).'</li>
+							<li>'.$this->trans('Sales:', array(), 'Modules.Statssales.Admin').' '.Tools::displayPrice($totals['orderSum'], $currency).'</li>
 						</ul>
 						<hr/>
 						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI'].'&export=2').'">
-							<i class="icon-cloud-upload"></i> '.$this->l('CSV Export').'
+							<i class="icon-cloud-upload"></i> '.$this->trans('CSV Export', array(), 'Modules.Statssales.Admin').'
 						</a>
 					</div>
 				</div>
 			</div>
 			<div class="alert alert-info">
-				'.$this->l('You can view the distribution of order statuses below.').'
+				'.$this->trans('You can view the distribution of order statuses below.', array(), 'Modules.Statssales.Admin').'
 			</div>
 			<div class="row row-margin-bottom">
 				<div class="col-lg-12">
@@ -162,11 +162,11 @@ class statssales extends ModuleGraph
 						'.($totals['orderCount'] ? $this->engine(array(
                 'type' => 'pie',
                 'option' => '3-'.(int)Tools::getValue('id_country')
-            )) : $this->l('No orders for this period.')).'
+            )) : $this->trans('No orders for this period.', array(), 'Modules.Statssales.Admin')).'
 					</div>
 					<div class="col-lg-4">
 						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI'].'&export=3').'">
-							<i class="icon-cloud-upload"></i> '.$this->l('CSV Export').'
+							<i class="icon-cloud-upload"></i> '.$this->trans('CSV Export', array(), 'Modules.Statssales.Admin').'
 						</a>
 					</div>
 				</div>
@@ -204,16 +204,16 @@ class statssales extends ModuleGraph
         list($this->option, $this->id_country) = explode('-', $options);
         switch ($this->option) {
             case 1:
-                $this->_titles['main'][0] = $this->l('Orders placed');
-                $this->_titles['main'][1] = $this->l('Products bought');
-                $this->_titles['main'][2] = $this->l('Products:');
+                $this->_titles['main'][0] = $this->trans('Orders placed', array(), 'Modules.Statssales.Admin');
+                $this->_titles['main'][1] = $this->trans('Products bought', array(), 'Modules.Statssales.Admin');
+                $this->_titles['main'][2] = $this->trans('Products:', array(), 'Modules.Statssales.Admin');
                 break;
             case 2:
                 $currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
-                $this->_titles['main'] = sprintf($this->l('Sales currency: %s'), $currency->iso_code);
+                $this->_titles['main'] = $this->trans('Sales currency: %s', array($currency->iso_code), 'Modules.Statssales.Admin');
                 break;
             case 3:
-                $this->_titles['main'] = $this->l('Percentage of orders per status.');
+                $this->_titles['main'] = $this->trans('Percentage of orders per status.', array(), 'Modules.Statssales.Admin');
                 break;
         }
     }
