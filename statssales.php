@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2016 PrestaShop
+* 2007-2015 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,65 +19,67 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2016 PrestaShop SA
+*  @copyright  2007-2015 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-if (!defined('_PS_VERSION_'))
-	exit;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class StatsSales extends ModuleGraph
+class statssales extends ModuleGraph
 {
-	private $html = '';
-	private $query = '';
-	private $query_group_by = '';
-	private $option = '';
-	private $id_country = '';
+    private $html = '';
+    private $query = '';
+    private $query_group_by = '';
+    private $option = '';
+    private $id_country = '';
 
-	public function __construct()
-	{
-		$this->name = 'statssales';
-		$this->tab = 'analytics_stats';
-		$this->version = '1.3.1';
-		$this->author = 'PrestaShop';
-		$this->need_instance = 0;
+    public function __construct()
+    {
+        $this->name = 'statssales';
+        $this->tab = 'analytics_stats';
+        $this->version = '1.3.0';
+        $this->author = 'PrestaShop';
+        $this->need_instance = 0;
 
-		parent::__construct();
+        parent::__construct();
 
-		$this->displayName = $this->l('Sales and orders');
-		$this->description = $this->l('Adds graphics presenting the evolution of sales and orders to the Stats dashboard.');
-		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.7.0.99');
-	}
+        $this->displayName = $this->l('Sales and orders');
+        $this->description = $this->l('Adds graphics presenting the evolution of sales and orders to the Stats dashboard.');
+        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+    }
 
-	public function install()
-	{
-		return (parent::install() && $this->registerHook('AdminStatsModules'));
-	}
+    public function install()
+    {
+        return (parent::install() && $this->registerHook('AdminStatsModules'));
+    }
 
-	public function hookAdminStatsModules()
-	{
-		$totals = $this->getTotals();
-		$currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
-		if (($id_export = (int)Tools::getValue('export')) == 1)
-			$this->csvExport(array(
-				'layers' => 2,
-				'type' => 'line',
-				'option' => '1-'.(int)Tools::getValue('id_country')
-			));
-		elseif ($id_export == 2)
-			$this->csvExport(array(
-				'layers' => 0,
-				'type' => 'line',
-				'option' => '2-'.(int)Tools::getValue('id_country')
-			));
-		elseif ($id_export == 3)
-			$this->csvExport(array(
-				'type' => 'pie',
-				'option' => '3-'.(int)Tools::getValue('id_country')
-			));
+    public function hookAdminStatsModules()
+    {
+        $totals = $this->getTotals();
+        $currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
+        if (($id_export = (int)Tools::getValue('export')) == 1) {
+            $this->csvExport(array(
+                'layers' => 2,
+                'type' => 'line',
+                'option' => '1-'.(int)Tools::getValue('id_country')
+            ));
+        } elseif ($id_export == 2) {
+            $this->csvExport(array(
+                'layers' => 0,
+                'type' => 'line',
+                'option' => '2-'.(int)Tools::getValue('id_country')
+            ));
+        } elseif ($id_export == 3) {
+            $this->csvExport(array(
+                'type' => 'pie',
+                'option' => '3-'.(int)Tools::getValue('id_country')
+            ));
+        }
 
-		$this->html = '
+        $this->html = '
 			<div class="panel-heading">
 				'.$this->displayName.'
 			</div>
@@ -91,19 +93,20 @@ class StatsSales extends ModuleGraph
 			</div>
 			<div class="alert alert-info">
 				<p>'
-					.$this->l('The following graphs represent the evolution of your shop\'s orders and sales turnover for a selected period.').'<br/>'
-					.$this->l('You should often consult this screen, as it allows you to quickly monitor your shop\'s sustainability. It also allows you to monitor multiple time periods.').'<br/>'
-					.$this->l('Only valid orders are graphically represented.')
-				.'</p>
+                    .$this->l('The following graphs represent the evolution of your shop\'s orders and sales turnover for a selected period.').'<br/>'
+                    .$this->l('You should often consult this screen, as it allows you to quickly monitor your shop\'s sustainability. It also allows you to monitor multiple time periods.').'<br/>'
+                    .$this->l('Only valid orders are graphically represented.')
+                .'</p>
 			</div>
 			<form action="'.Tools::safeOutput($_SERVER['REQUEST_URI']).'" method="post" class="form-horizontal alert">
 				<div class="row">
 					<div class="col-lg-4 col-lg-offset-7">
 						<select name="id_country">
 							<option value="0"'.((!Tools::getValue('id_order_state')) ? ' selected="selected"' : '').'>'.$this->l('All countries').'</option>';
-		foreach (Country::getCountries($this->context->language->id) as $country)
-			$this->html .= '<option value="'.$country['id_country'].'"'.(($country['id_country'] == Tools::getValue('id_country')) ? ' selected="selected"' : '').'>'.$country['name'].'</option>';
-		$this->html .= '</select>
+        foreach (Country::getCountries($this->context->language->id) as $country) {
+            $this->html .= '<option value="'.$country['id_country'].'"'.(($country['id_country'] == Tools::getValue('id_country')) ? ' selected="selected"' : '').'>'.$country['name'].'</option>';
+        }
+        $this->html .= '</select>
 					</div>
 					<div class="col-lg-1">
 						<input type="submit" name="submitCountry" value="'.$this->l('Filter').'" class="btn btn-default pull-right" />
@@ -114,10 +117,10 @@ class StatsSales extends ModuleGraph
 				<div class="col-lg-12">
 					<div class="col-lg-8">
 						'.$this->engine(array(
-				'type' => 'line',
-				'option' => '1-'.(int)Tools::getValue('id_country'),
-				'layers' => 2
-			)).'
+                'type' => 'line',
+                'option' => '1-'.(int)Tools::getValue('id_country'),
+                'layers' => 2
+            )).'
 					</div>
 					<div class="col-lg-4">
 						<ul class="list-unstyled">
@@ -135,9 +138,9 @@ class StatsSales extends ModuleGraph
 				<div class="col-lg-12">
 					<div class="col-lg-8">
 						'.$this->engine(array(
-				'type' => 'line',
-				'option' => '2-'.(int)Tools::getValue('id_country')
-			)).'
+                'type' => 'line',
+                'option' => '2-'.(int)Tools::getValue('id_country')
+            )).'
 					</div>
 					<div class="col-lg-4">
 						<ul class="list-unstyled">
@@ -157,9 +160,9 @@ class StatsSales extends ModuleGraph
 				<div class="col-lg-12">
 					<div class="col-lg-8">
 						'.($totals['orderCount'] ? $this->engine(array(
-				'type' => 'pie',
-				'option' => '3-'.(int)Tools::getValue('id_country')
-			)) : $this->l('No orders for this period.')).'
+                'type' => 'pie',
+                'option' => '3-'.(int)Tools::getValue('id_country')
+            )) : $this->l('No orders for this period.')).'
 					</div>
 					<div class="col-lg-4">
 						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI'].'&export=3').'">
@@ -169,21 +172,21 @@ class StatsSales extends ModuleGraph
 				</div>
 			</div>';
 
-		return $this->html;
-	}
+        return $this->html;
+    }
 
-	private function getTotals()
-	{
-		$sql = 'SELECT COUNT(o.`id_order`) as orderCount, SUM(o.`total_paid_real` / o.conversion_rate) as orderSum
+    private function getTotals()
+    {
+        $sql = 'SELECT COUNT(o.`id_order`) as orderCount, SUM(o.`total_paid_real` / o.conversion_rate) as orderSum
 				FROM `'._DB_PREFIX_.'orders` o
 				'.((int)Tools::getValue('id_country') ? 'LEFT JOIN `'._DB_PREFIX_.'address` a ON o.id_address_delivery = a.id_address' : '').'
 				WHERE o.valid = 1
 					'.Shop::addSqlRestriction(Shop::SHARE_ORDER, 'o').'
 					'.((int)Tools::getValue('id_country') ? 'AND a.id_country = '.(int)Tools::getValue('id_country') : '').'
 					AND o.`invoice_date` BETWEEN '.ModuleGraph::getDateBetween();
-		$result1 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+        $result1 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
 
-		$sql = 'SELECT SUM(od.product_quantity) as products
+        $sql = 'SELECT SUM(od.product_quantity) as products
 				FROM `'._DB_PREFIX_.'orders` o
 				LEFT JOIN `'._DB_PREFIX_.'order_detail` od ON od.`id_order` = o.`id_order`
 				'.((int)Tools::getValue('id_country') ? 'LEFT JOIN `'._DB_PREFIX_.'address` a ON o.id_address_delivery = a.id_address' : '').'
@@ -191,37 +194,37 @@ class StatsSales extends ModuleGraph
 					'.Shop::addSqlRestriction(Shop::SHARE_ORDER, 'o').'
 					'.((int)Tools::getValue('id_country') ? 'AND a.id_country = '.(int)Tools::getValue('id_country') : '').'
 					AND o.`invoice_date` BETWEEN '.ModuleGraph::getDateBetween();
-		$result2 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+        $result2 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
 
-		return array_merge($result1, $result2);
-	}
+        return array_merge($result1, $result2);
+    }
 
-	public function setOption($options, $layers = 1)
-	{
-		list($this->option, $this->id_country) = explode('-', $options);
-		switch ($this->option)
-		{
-			case 1:
-				$this->_titles['main'][0] = $this->l('Orders placed');
-				$this->_titles['main'][1] = $this->l('Products bought');
-				$this->_titles['main'][2] = $this->l('Products:');
-				break;
-			case 2:
-				$currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
-				$this->_titles['main'] = sprintf($this->l('Sales currency: %s'), $currency->iso_code);
-				break;
-			case 3:
-				$this->_titles['main'] = $this->l('Percentage of orders per status.');
-				break;
-		}
-	}
+    public function setOption($options, $layers = 1)
+    {
+        list($this->option, $this->id_country) = explode('-', $options);
+        switch ($this->option) {
+            case 1:
+                $this->_titles['main'][0] = $this->l('Orders placed');
+                $this->_titles['main'][1] = $this->l('Products bought');
+                $this->_titles['main'][2] = $this->l('Products:');
+                break;
+            case 2:
+                $currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
+                $this->_titles['main'] = sprintf($this->l('Sales currency: %s'), $currency->iso_code);
+                break;
+            case 3:
+                $this->_titles['main'] = $this->l('Percentage of orders per status.');
+                break;
+        }
+    }
 
-	protected function getData($layers)
-	{
-		if ($this->option == 3)
-			return $this->getStatesData();
+    protected function getData($layers)
+    {
+        if ($this->option == 3) {
+            return $this->getStatesData();
+        }
 
-		$this->query = '
+        $this->query = '
 			SELECT o.`invoice_date`, o.`total_paid_real` / o.conversion_rate as total_paid_real, SUM(od.product_quantity) as product_quantity
 			FROM `'._DB_PREFIX_.'orders` o
 			LEFT JOIN `'._DB_PREFIX_.'order_detail` od ON od.`id_order` = o.`id_order`
@@ -230,76 +233,75 @@ class StatsSales extends ModuleGraph
 				'.Shop::addSqlRestriction(Shop::SHARE_ORDER, 'o').'
 				'.((int)$this->id_country ? 'AND a.id_country = '.(int)$this->id_country : '').'
 				AND o.`invoice_date` BETWEEN ';
-		$this->query_group_by = ' GROUP BY o.id_order';
-		$this->setDateGraph($layers, true);
-	}
+        $this->query_group_by = ' GROUP BY o.id_order';
+        $this->setDateGraph($layers, true);
+    }
 
-	protected function setAllTimeValues($layers)
-	{
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query.$this->getDate().$this->query_group_by);
-		foreach ($result as $row)
-			if ($this->option == 1)
-			{
-				$this->_values[0][(int)substr($row['invoice_date'], 0, 4)] += 1;
-				$this->_values[1][(int)substr($row['invoice_date'], 0, 4)] += $row['product_quantity'];
-			}
-			else
-				$this->_values[(int)substr($row['invoice_date'], 0, 4)] += $row['total_paid_real'];
-	}
+    protected function setAllTimeValues($layers)
+    {
+        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query.$this->getDate().$this->query_group_by);
+        foreach ($result as $row) {
+            if ($this->option == 1) {
+                $this->_values[0][(int)substr($row['invoice_date'], 0, 4)] += 1;
+                $this->_values[1][(int)substr($row['invoice_date'], 0, 4)] += $row['product_quantity'];
+            } else {
+                $this->_values[(int)substr($row['invoice_date'], 0, 4)] += $row['total_paid_real'];
+            }
+        }
+    }
 
-	protected function setYearValues($layers)
-	{
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query.$this->getDate().$this->query_group_by);
-		foreach ($result as $row)
-		{
-			$mounth = (int)substr($row['invoice_date'], 5, 2);
-			if ($this->option == 1)
-			{
-				if (!isset($this->_values[0][$mounth]))
-					$this->_values[0][$mounth] = 0;
-				if (!isset($this->_values[1][$mounth]))
-					$this->_values[1][$mounth] = 0;
-				$this->_values[0][$mounth] += 1;
-				$this->_values[1][$mounth] += $row['product_quantity'];
-			}
-			else
-			{
-				if (!isset($this->_values[$mounth]))
-					$this->_values[$mounth] = 0;
-				$this->_values[$mounth] += $row['total_paid_real'];
-			}
-		}
-	}
+    protected function setYearValues($layers)
+    {
+        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query.$this->getDate().$this->query_group_by);
+        foreach ($result as $row) {
+            $mounth = (int)substr($row['invoice_date'], 5, 2);
+            if ($this->option == 1) {
+                if (!isset($this->_values[0][$mounth])) {
+                    $this->_values[0][$mounth] = 0;
+                }
+                if (!isset($this->_values[1][$mounth])) {
+                    $this->_values[1][$mounth] = 0;
+                }
+                $this->_values[0][$mounth] += 1;
+                $this->_values[1][$mounth] += $row['product_quantity'];
+            } else {
+                if (!isset($this->_values[$mounth])) {
+                    $this->_values[$mounth] = 0;
+                }
+                $this->_values[$mounth] += $row['total_paid_real'];
+            }
+        }
+    }
 
-	protected function setMonthValues($layers)
-	{
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query.$this->getDate().$this->query_group_by);
-		foreach ($result as $row)
-			if ($this->option == 1)
-			{
-				$this->_values[0][(int)substr($row['invoice_date'], 8, 2)] += 1;
-				$this->_values[1][(int)substr($row['invoice_date'], 8, 2)] += $row['product_quantity'];
-			}
-			else
-				$this->_values[(int)substr($row['invoice_date'], 8, 2)] += $row['total_paid_real'];
-	}
+    protected function setMonthValues($layers)
+    {
+        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query.$this->getDate().$this->query_group_by);
+        foreach ($result as $row) {
+            if ($this->option == 1) {
+                $this->_values[0][(int)substr($row['invoice_date'], 8, 2)] += 1;
+                $this->_values[1][(int)substr($row['invoice_date'], 8, 2)] += $row['product_quantity'];
+            } else {
+                $this->_values[(int)substr($row['invoice_date'], 8, 2)] += $row['total_paid_real'];
+            }
+        }
+    }
 
-	protected function setDayValues($layers)
-	{
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query.$this->getDate().$this->query_group_by);
-		foreach ($result as $row)
-			if ($this->option == 1)
-			{
-				$this->_values[0][(int)substr($row['invoice_date'], 11, 2)] += 1;
-				$this->_values[1][(int)substr($row['invoice_date'], 11, 2)] += $row['product_quantity'];
-			}
-			else
-				$this->_values[(int)substr($row['invoice_date'], 11, 2)] += $row['total_paid_real'];
-	}
+    protected function setDayValues($layers)
+    {
+        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query.$this->getDate().$this->query_group_by);
+        foreach ($result as $row) {
+            if ($this->option == 1) {
+                $this->_values[0][(int)substr($row['invoice_date'], 11, 2)] += 1;
+                $this->_values[1][(int)substr($row['invoice_date'], 11, 2)] += $row['product_quantity'];
+            } else {
+                $this->_values[(int)substr($row['invoice_date'], 11, 2)] += $row['total_paid_real'];
+            }
+        }
+    }
 
-	private function getStatesData()
-	{
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+    private function getStatesData()
+    {
+        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
 		SELECT osl.`name`, COUNT(oh.`id_order`) as total
 		FROM `'._DB_PREFIX_.'order_state` os
 		LEFT JOIN `'._DB_PREFIX_.'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` AND osl.`id_lang` = '.(int)$this->getLang().')
@@ -316,10 +318,9 @@ class StatsSales extends ModuleGraph
 		'.((int)$this->id_country ? 'AND a.id_country = '.(int)$this->id_country : '').'
 		AND o.`date_add` BETWEEN '.ModuleGraph::getDateBetween().'
 		GROUP BY oh.`id_order_state`');
-		foreach ($result as $row)
-		{
-			$this->_values[] = $row['total'];
-			$this->_legend[] = $row['name'];
-		}
-	}
+        foreach ($result as $row) {
+            $this->_values[] = $row['total'];
+            $this->_legend[] = $row['name'];
+        }
+    }
 }
