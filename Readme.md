@@ -2,7 +2,7 @@
 
 ## About
 
-Adds graphics presenting the evolution of sales and orders to the Stats dashboard.
+Enrich your stats, add graphics presenting the evolution of your sales and orders.
 
 ## Reporting issues
 
