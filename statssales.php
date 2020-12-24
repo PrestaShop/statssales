@@ -177,7 +177,7 @@ class statssales extends ModuleGraph
 
     private function getTotals()
     {
-        $sql = 'SELECT COUNT(o.`id_order`) as orderCount, SUM(o.`total_paid_real` / o.conversion_rate) as orderSum
+        $sql = 'SELECT COUNT(o.`id_order`) as orderCount, SUM(o.`total_paid_tax_excl` / o.conversion_rate) as orderSum
 				FROM `'._DB_PREFIX_.'orders` o
 				'.((int)Tools::getValue('id_country') ? 'LEFT JOIN `'._DB_PREFIX_.'address` a ON o.id_address_delivery = a.id_address' : '').'
 				WHERE o.valid = 1
