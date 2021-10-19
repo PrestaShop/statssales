@@ -144,7 +144,7 @@ class statssales extends ModuleGraph
 					</div>
 					<div class="col-lg-4">
 						<ul class="list-unstyled">
-							<li>'.$this->trans('Sales:', array(), 'Modules.Statssales.Admin').' '.Tools::displayPrice($totals['orderSum'], $currency).'</li>
+							<li>' . $this->trans('Sales:', array(), 'Modules.Statssales.Admin') . ' ' . $this->context->getCurrentLocale()->formatPrice($totals['orderSum'], $currency->iso_code) . '</li>
 						</ul>
 						<hr/>
 						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI'].'&export=2').'">
