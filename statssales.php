@@ -63,7 +63,7 @@ class statssales extends ModuleGraph
 
         $this->displayName = $this->trans('Sales and orders', array(), 'Modules.Statssales.Admin');
         $this->description = $this->trans('Enrich your stats, add graphics presenting the evolution of your sales and orders.', array(), 'Modules.Statssales.Admin');
-        $this->ps_versions_compliancy = array('min' => '1.7.1.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.7.6.0', 'max' => _PS_VERSION_);
     }
 
     public function install()
