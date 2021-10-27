@@ -202,7 +202,7 @@ class statssales extends ModuleGraph
         $sql .= '- SUM((ps.total_products_tax_excl - ps.total_shipping_tax_excl) / ps.conversion_rate)';
         $sql .= ') as orderSum';
         $sql .= ' FROM `'._DB_PREFIX_.'orders` o';
-        $sql .= ' INNER JOIN `' . _DB_PREFIX_ . 'order_slip` ps ON o.id_order = ps.id_order';
+        $sql .= ' LEFT JOIN `' . _DB_PREFIX_ . 'order_slip` ps ON o.id_order = ps.id_order';
         $sql .= ' INNER JOIN `' . _DB_PREFIX_ . 'order_state` os ON o.current_state = os.id_order_state';
         if ($idCountry) {
             $sql .=  ' INNER JOIN `'._DB_PREFIX_.'address` a ON o.id_address_delivery = a.id_address';
