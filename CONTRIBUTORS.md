@@ -3,7 +3,6 @@ GitHub contributors:
  - AlexEven
  - Francois Gaillard
  - Gregory Roussac
- - Jerome Nadaud
  - Jérôme Nadaud
  - Maxime Biloé
  - Quetzacoalt91
