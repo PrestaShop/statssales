@@ -159,7 +159,11 @@ class statssales extends ModuleGraph
 					</div>
 					<div class="col-lg-4">
 						<ul class="list-unstyled">
-							<li>' . $this->trans('Sales:', array(), 'Modules.Statssales.Admin') . ' ' . $this->context->getCurrentLocale()->formatPrice($totals['orderSum'], $currency->iso_code) . '</li>
+							<li>'
+            . $this->trans('Sales:', array(), 'Modules.Statssales.Admin')
+            . ' '
+            . $this->context->getCurrentLocale()->formatPrice($totals['orderSum'], $currency->iso_code)
+            . '</li>
 						</ul>
 						<hr/>
 						<a class="btn btn-default export-csv" href="'.Tools::safeOutput($_SERVER['REQUEST_URI'].'&export=2').'">
@@ -195,12 +199,12 @@ class statssales extends ModuleGraph
         $idCountry = (int) Tools::getValue('id_country');
 
         $sql = 'SELECT COUNT(o.`id_order`) as orderCount,';
-        $sql .= ' (';
+        $sql .= ' IFNULL(';
         // Sum Orders
         $sql .= 'SUM(o.`total_paid_tax_excl` / o.conversion_rate)';
         // Sum Refunds
         $sql .= '- SUM((ps.total_products_tax_excl - ps.total_shipping_tax_excl) / ps.conversion_rate)';
-        $sql .= ') as orderSum';
+        $sql .= ', 0) as orderSum';
         $sql .= ' FROM `'._DB_PREFIX_.'orders` o';
         $sql .= ' LEFT JOIN `' . _DB_PREFIX_ . 'order_slip` ps ON o.id_order = ps.id_order';
         $sql .= ' INNER JOIN `' . _DB_PREFIX_ . 'order_state` os ON o.current_state = os.id_order_state';
@@ -216,14 +220,19 @@ class statssales extends ModuleGraph
         $sql .= ' AND o.`invoice_date` BETWEEN ' . ModuleGraph::getDateBetween();
         $result1 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
 
-        $sql = 'SELECT SUM(od.product_quantity) as products
-				FROM `'._DB_PREFIX_.'orders` o
-				LEFT JOIN `'._DB_PREFIX_.'order_detail` od ON od.`id_order` = o.`id_order`
-				'.((int)Tools::getValue('id_country') ? 'LEFT JOIN `'._DB_PREFIX_.'address` a ON o.id_address_delivery = a.id_address' : '').'
-				WHERE o.valid = 1
-					'.Shop::addSqlRestriction(Shop::SHARE_ORDER, 'o').'
-					'.((int)Tools::getValue('id_country') ? 'AND a.id_country = '.(int)Tools::getValue('id_country') : '').'
-					AND o.`invoice_date` BETWEEN '.ModuleGraph::getDateBetween();
+        $sql = 'SELECT IFNULL(SUM(od.product_quantity), 0) as products';
+        $sql .= ' FROM `'._DB_PREFIX_.'orders` o';
+        $sql .= ' LEFT JOIN `'._DB_PREFIX_.'order_detail` od ON od.`id_order` = o.`id_order`';
+        if ((int) Tools::getValue('id_country')) {
+            $sql .= ' LEFT JOIN `'._DB_PREFIX_.'address` a ON o.id_address_delivery = a.id_address';
+        }
+        $sql .= ' WHERE o.valid = 1 ';
+        $sql .= Shop::addSqlRestriction(Shop::SHARE_ORDER, 'o');
+        if ((int) Tools::getValue('id_country')) {
+            $sql .= ' AND a.id_country = '.(int)Tools::getValue('id_country');
+        }
+        $sql .= ' AND o.`invoice_date` BETWEEN '.ModuleGraph::getDateBetween();
+
         $result2 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
 
         return array_merge($result1, $result2);
