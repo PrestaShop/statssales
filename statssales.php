@@ -68,10 +68,10 @@ class statssales extends ModuleGraph
 
     public function install()
     {
-        return (parent::install() && $this->registerHook('AdminStatsModules'));
+        return (parent::install() && $this->registerHook('displayAdminStatsModules'));
     }
 
-    public function hookAdminStatsModules()
+    public function hookDisplayAdminStatsModules()
     {
         $totals = $this->getTotals();
         $currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
