@@ -54,7 +54,7 @@ class statssales extends ModuleGraph
     public function __construct()
     {
         $this->name = 'statssales';
-        $this->tab = 'analytics_stats';
+        $this->tab = 'administration';
         $this->version = '2.1.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
