@@ -217,7 +217,7 @@ class statssales extends ModuleGraph
             $sql .= ' AND a.id_country = ' . $idCountry;
         }
         $sql .= ' AND o.`invoice_date` BETWEEN ' . ModuleGraph::getDateBetween();
-        $result1 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+        $result1 = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getRow($sql);
 
         $sql = 'SELECT IFNULL(SUM(od.product_quantity), 0) as products';
         $sql .= ' FROM `' . _DB_PREFIX_ . 'orders` o';
@@ -232,7 +232,7 @@ class statssales extends ModuleGraph
         }
         $sql .= ' AND o.`invoice_date` BETWEEN ' . ModuleGraph::getDateBetween();
 
-        $result2 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+        $result2 = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getRow($sql);
 
         return array_merge($result1, $result2);
     }
@@ -277,7 +277,7 @@ class statssales extends ModuleGraph
 
     protected function setAllTimeValues($layers)
     {
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query . $this->getDate() . $this->query_group_by);
+        $result = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($this->query . $this->getDate() . $this->query_group_by);
         foreach ($result as $row) {
             if ($this->option == 1) {
                 ++$this->_values[0][(int) substr($row['invoice_date'], 0, 4)];
@@ -290,7 +290,7 @@ class statssales extends ModuleGraph
 
     protected function setYearValues($layers)
     {
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query . $this->getDate() . $this->query_group_by);
+        $result = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($this->query . $this->getDate() . $this->query_group_by);
         foreach ($result as $row) {
             $mounth = (int) substr($row['invoice_date'], 5, 2);
             if ($this->option == 1) {
@@ -313,7 +313,7 @@ class statssales extends ModuleGraph
 
     protected function setMonthValues($layers)
     {
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query . $this->getDate() . $this->query_group_by);
+        $result = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($this->query . $this->getDate() . $this->query_group_by);
         foreach ($result as $row) {
             if ($this->option == 1) {
                 ++$this->_values[0][(int) substr($row['invoice_date'], 8, 2)];
@@ -326,7 +326,7 @@ class statssales extends ModuleGraph
 
     protected function setDayValues($layers)
     {
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query . $this->getDate() . $this->query_group_by);
+        $result = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($this->query . $this->getDate() . $this->query_group_by);
         foreach ($result as $row) {
             if ($this->option == 1) {
                 ++$this->_values[0][(int) substr($row['invoice_date'], 11, 2)];
@@ -339,7 +339,7 @@ class statssales extends ModuleGraph
 
     private function getStatesData()
     {
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+        $result = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS('
 		SELECT osl.`name`, COUNT(oh.`id_order`) as total
 		FROM `' . _DB_PREFIX_ . 'order_state` os
 		LEFT JOIN `' . _DB_PREFIX_ . 'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` AND osl.`id_lang` = ' . (int) $this->getLang() . ')
