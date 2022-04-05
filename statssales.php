@@ -198,12 +198,11 @@ class statssales extends ModuleGraph
         $idCountry = (int) Tools::getValue('id_country');
 
         $sql = 'SELECT COUNT(o.`id_order`) as orderCount,';
-        $sql .= ' IFNULL(';
         // Sum Orders
-        $sql .= 'SUM(o.`total_paid_tax_excl` / o.conversion_rate)';
+        $sql .= 'IFNULL(SUM(o.`total_paid_tax_excl` / o.conversion_rate), 0)';
         // Sum Refunds
-        $sql .= '- SUM((ps.total_products_tax_excl - ps.total_shipping_tax_excl) / ps.conversion_rate)';
-        $sql .= ', 0) as orderSum';
+        $sql .= '- IFNULL(SUM((ps.total_products_tax_excl - ps.total_shipping_tax_excl) / ps.conversion_rate), 0)';
+        $sql .= ' as orderSum';
         $sql .= ' FROM `' . _DB_PREFIX_ . 'orders` o';
         $sql .= ' LEFT JOIN `' . _DB_PREFIX_ . 'order_slip` ps ON o.id_order = ps.id_order';
         $sql .= ' INNER JOIN `' . _DB_PREFIX_ . 'order_state` os ON o.current_state = os.id_order_state';
@@ -262,15 +261,21 @@ class statssales extends ModuleGraph
             return $this->getStatesData();
         }
 
-        $this->query = '
-			SELECT o.`invoice_date`, o.`total_paid_real` / o.conversion_rate as total_paid_real, SUM(od.product_quantity) as product_quantity
-			FROM `' . _DB_PREFIX_ . 'orders` o
-			LEFT JOIN `' . _DB_PREFIX_ . 'order_detail` od ON od.`id_order` = o.`id_order`
-			' . ((int) $this->id_country ? 'LEFT JOIN `' . _DB_PREFIX_ . 'address` a ON o.id_address_delivery = a.id_address' : '') . '
-			WHERE o.valid = 1
-				' . Shop::addSqlRestriction(Shop::SHARE_ORDER, 'o') . '
-				' . ((int) $this->id_country ? 'AND a.id_country = ' . (int) $this->id_country : '') . '
-				AND o.`invoice_date` BETWEEN ';
+        $this->query = 'SELECT o.`invoice_date`, '
+            // Sum Orders
+            . 'IFNULL(SUM(o.`total_paid_tax_excl` / o.conversion_rate), 0)'
+            // Sum Refunds
+            . ' - IFNULL(SUM((ps.total_products_tax_excl - ps.total_shipping_tax_excl) / ps.conversion_rate), 0)'
+            . ' as total_paid_real, '
+            . ' (SELECT SUM(product_quantity) FROM `' . _DB_PREFIX_ . 'order_detail` WHERE `id_order` = o.`id_order`) as product_quantity'
+            . ' FROM `' . _DB_PREFIX_ . 'orders` o'
+            . ' LEFT JOIN `' . _DB_PREFIX_ . 'order_slip` ps ON o.id_order = ps.id_order'
+            . ' INNER JOIN `' . _DB_PREFIX_ . 'order_state` os ON o.current_state = os.id_order_state'
+            . ((int) $this->id_country ? ' INNER JOIN `' . _DB_PREFIX_ . 'address` a ON o.id_address_delivery = a.id_address' : '')
+            . ' WHERE o.valid = 1 AND os.logable = 1'
+            . Shop::addSqlRestriction(Shop::SHARE_ORDER, 'o')
+            . ((int) $this->id_country ? ' AND a.id_country = ' . (int) $this->id_country : '')
+            . ' AND o.`invoice_date` BETWEEN ';
         $this->query_group_by = ' GROUP BY o.id_order';
         $this->setDateGraph($layers, true);
     }
@@ -286,6 +291,8 @@ class statssales extends ModuleGraph
                 $this->_values[(int) substr($row['invoice_date'], 0, 4)] += $row['total_paid_real'];
             }
         }
+
+        $this->formatValues();
     }
 
     protected function setYearValues($layers)
@@ -309,6 +316,8 @@ class statssales extends ModuleGraph
                 $this->_values[$mounth] += $row['total_paid_real'];
             }
         }
+
+        $this->formatValues();
     }
 
     protected function setMonthValues($layers)
@@ -322,6 +331,8 @@ class statssales extends ModuleGraph
                 $this->_values[(int) substr($row['invoice_date'], 8, 2)] += $row['total_paid_real'];
             }
         }
+
+        $this->formatValues();
     }
 
     protected function setDayValues($layers)
@@ -334,6 +345,18 @@ class statssales extends ModuleGraph
             } else {
                 $this->_values[(int) substr($row['invoice_date'], 11, 2)] += $row['total_paid_real'];
             }
+        }
+
+        $this->formatValues();
+    }
+
+    private function formatValues()
+    {
+        if ($this->option == 1) {
+            return;
+        }
+        foreach ($this->_values as $key => $value) {
+            $this->_values[$key] = number_format($value, 2);
         }
     }
 
