@@ -1,0 +1,6 @@
+includes:
+	- %currentWorkingDirectory%/tests/phpstan/phpstan.neon
+
+parameters:
+  ignoreErrors:
+    - '#Parameter \#1 \$share of static method ShopCore::addSqlRestriction\(\) expects int, string given.#'
